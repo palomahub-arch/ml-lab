@@ -1,0 +1,88 @@
+version: "3.9"
+
+services:
+
+  # ----------------------------
+  # ZOOKEEPER
+  # ----------------------------
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    ports:
+      - "2181:2181"
+
+  # ----------------------------
+  # KAFKA (dual listener)
+  # ----------------------------
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: kafka
+    depends_on:
+      - zookeeper
+
+    ports:
+      - "9092:9092"     # interno docker
+      - "29092:29092"   # externo host (Python local)
+
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+
+      # Listeners
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
+
+      # Advertised listeners
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+
+      # Protocol map
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+
+      # Inter broker
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+
+      # Single node safe configs
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+
+  # ----------------------------
+  # MLFLOW TRACKING SERVER
+  # ----------------------------
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:latest
+    container_name: mlflow
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlflow:/mlflow
+    command: >
+      mlflow server
+      --host 0.0.0.0
+      --port 5000
+
+  # ----------------------------
+  # SPARK MASTER (keeps running)
+  # ----------------------------
+  sparkmaster:
+    image: apache/spark:3.5.0
+    container_name: sparkmaster
+    ports:
+      - "8080:8080"   # Spark UI
+      - "7077:7077"   # Cluster port
+    volumes:
+      - ./spark:/app
+    command: >
+      bash -c "/opt/spark/sbin/start-master.sh -h sparkmaster && tail -f /dev/null"
+
+  # ----------------------------
+  # SPARK WORKER (keeps running)
+  # ----------------------------
+  sparkworker:
+    image: apache/spark:3.5.0
+    container_name: sparkworker
+    depends_on:
+      - sparkmaster
+    volumes:
+      - ./spark:/app
+    command: >
+      bash -c "/opt/spark/sbin/start-worker.sh spark://sparkmaster:7077 && tail -f /dev/null"
