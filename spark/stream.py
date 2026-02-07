@@ -22,8 +22,9 @@ parsed = df.selectExpr("CAST(value AS STRING)") \
     .select("data.*")
 
 query = parsed.writeStream \
-    .format("console") \
-    .outputMode("append") \
+    .format("parquet") \
+    .option("path", "/app/output") \
+    .option("checkpointLocation", "/app/checkpoints") \
     .start()
 
 query.awaitTermination()

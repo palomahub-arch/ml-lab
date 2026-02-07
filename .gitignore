@@ -1,0 +1,53 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv/
+venv/
+
+# =========================
+# MLflow
+# =========================
+mlruns/
+mlflow.db
+
+# =========================
+# Spark
+# =========================
+spark-warehouse/
+derby.log
+metastore_db/
+spark/
+*.jar
+*.crc
+*.parquet
+*.json
+# =========================
+# Kafka / Zookeeper
+# =========================
+data/
+logs/
+kafka-logs/
+zookeeper-data/
+
+# =========================
+# Docker
+# =========================
+*.log
+docker-compose.override.yml
+
+# =========================
+# VS Code / Codespaces
+# =========================
+.vscode/
+.devcontainer/
+
+# =========================
+# OS junk
+# =========================
+.DS_Store
+Thumbs.db
