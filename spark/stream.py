@@ -15,6 +15,8 @@ schema = StructType([
 df = spark.readStream.format("kafka") \
     .option("kafka.bootstrap.servers", "kafka:9092") \
     .option("subscribe", "transactions") \
+    .option("startingOffsets", "earliest") \
+    .option("failOnDataLoss", "false") \
     .load()
 
 parsed = df.selectExpr("CAST(value AS STRING)") \
@@ -25,6 +27,7 @@ query = parsed.writeStream \
     .format("parquet") \
     .option("path", "/app/output") \
     .option("checkpointLocation", "/app/checkpoints") \
+    .outputMode("append") \
     .start()
 
 query.awaitTermination()

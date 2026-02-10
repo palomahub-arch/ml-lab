@@ -1,53 +1,30 @@
-# =========================
 # Python
-# =========================
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.env
+
+# Virtual env
 .venv/
+env/
 venv/
 
-# =========================
 # MLflow
-# =========================
 mlruns/
 mlflow.db
 
-# =========================
-# Spark
-# =========================
-spark-warehouse/
-derby.log
-metastore_db/
-spark/
-*.jar
-*.crc
-*.parquet
-*.json
-# =========================
-# Kafka / Zookeeper
-# =========================
-data/
-logs/
-kafka-logs/
-zookeeper-data/
+# Spark outputs
+spark/output/
+spark/checkpoints/
 
-# =========================
-# Docker
-# =========================
+# Logs
 *.log
-docker-compose.override.yml
 
-# =========================
-# VS Code / Codespaces
-# =========================
-.vscode/
-.devcontainer/
-
-# =========================
-# OS junk
-# =========================
+# OS
 .DS_Store
-Thumbs.db
+
+# VS Code
+.vscode/
+
+# Docker
+*.pid
