@@ -71,7 +71,7 @@ docker exec -it sparkmaster \
 
 ### 4. Train Fraud Detection Model  
 ```bash
-python mlflor/train.py
+python mlflow/train.py
 ```
 
 ### 5. View Experiments in MLflow
